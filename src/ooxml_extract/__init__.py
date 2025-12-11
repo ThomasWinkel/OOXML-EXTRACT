@@ -4,8 +4,8 @@ import shutil
 from pathlib import Path
 from typing import Set
 from .xml_formatter import prettify_xml_file, minify_xml_file_to_bytes
-from .ooxml_tools import extract_vba_project, update_vba_project_bin
-
+#from .ooxml_tools import extract_vba_project, update_vba_project_bin
+from .visio_vba import export_vba_project, import_vba_project
 
 def get_unique_folder_name(base_path: Path) -> Path:
     """
@@ -93,9 +93,12 @@ def pack_ooxml(source_dir: Path, target_file: Path, overwrite: bool) -> Path:
                     # VBA-Projekt wurde nur zum lesen extrahiert und darf nicht ins OOXML-Archiv
                     if file_path.parent.name == 'vbaProject':
                         continue
-                    if file_path.name == 'vbaProject.bin':
-                        click.echo("Aktualisiere vbaProject.bin... ACHTUNG: Das funktioniert nicht!")
-                        update_vba_project_bin(file_path, file_path.parent.parent / 'vbaProject')
+
+                    #TODO: Update vbaProject.bin without Visio Application
+                    #if file_path.name == 'vbaProject.bin':
+                    #    click.echo("Aktualisiere vbaProject.bin... ACHTUNG: Das funktioniert nicht!")
+                    #    update_vba_project_bin(file_path, file_path.parent.parent / 'vbaProject')
+
                     # Relativer Pfad im ZIP
                     arcname = file_path.relative_to(source_dir)
                     # XML-Dateien minimieren
@@ -109,8 +112,14 @@ def pack_ooxml(source_dir: Path, target_file: Path, overwrite: bool) -> Path:
                     
                     file_count += 1
         
+        success = import_vba_project(target_file, source_dir / 'vbaProject')
+
         click.echo(f"✓ {file_count} Dateien gepackt ({xml_count} XML-Dateien minimiert)")
         click.echo(f"✓ Datei erstellt: {target_file}")
+        if success:
+            click.echo("✓ VBA-Projekt aktualisiert in vbaProject.bin")
+        else:
+            click.echo("✗ Kein VBA-Projekt zum Aktualisieren gefunden.")  
         
         return target_file
     
@@ -166,7 +175,9 @@ def extract_ooxml(file_path: Path, target_dir: Path, overwrite: bool, prettify: 
             success, total = prettify_xml_files(final_target)
             click.echo(f"✓ {success} von {total} XML-Dateien formatiert")
         
-        if extract_vba_project(file_path, final_target / "vbaProject"):
+        #if extract_vba_project(file_path, final_target / "vbaProject"):
+        #    click.echo("✓ VBA-Projekt extrahiert nach: vbaProject/")
+        if export_vba_project(file_path, final_target / "vbaProject"):
             click.echo("✓ VBA-Projekt extrahiert nach: vbaProject/")
         
         return final_target

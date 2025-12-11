@@ -10,6 +10,7 @@ requires-python = ">=3.13"
 dependencies = [
     "click>=8.3.0",
     "oletools>=0.60.2",
+    "pywin32>=311",
 ]
 
 [project.scripts]
