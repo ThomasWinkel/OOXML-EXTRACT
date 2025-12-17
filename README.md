@@ -22,3 +22,8 @@ ooxml-extract extract .\Drawing.vsdm -p
 ```
 ooxml-extract pack .\Drawing .\NewDrawing.vsdm -f
 ```
+
+### Automerge
+```
+ooxml-extract automerge .\Original\Stencil.vssm .\Colleague1\Stencil.vssm .\Colleague2\Stencil.vssm .\Merged\Stencil.vssm -f
+```
