@@ -1,7 +1,7 @@
 import click
 from pathlib import Path
 from .ooxml_package import extract_ooxml, pack_ooxml
-from .ooxml_merge import automerge
+from .ooxml_merge import automerge, manual_merge
 
 
 @click.group()
@@ -102,3 +102,24 @@ def cli_automerge(ooxml_original: Path, ooxml_a: Path, ooxml_b: Path, ooxml_merg
       ooxml automerge original.vsdx mod_a.vsdx mod_b.vsdx result.vsdx --force
     """
     automerge(ooxml_original, ooxml_a, ooxml_b, ooxml_merged, force)
+
+
+@cli.command("manual-merge")
+@click.argument('ooxml_original', type=click.Path(exists=True, file_okay=True, dir_okay=False, path_type=Path))
+@click.argument('ooxml_a', type=click.Path(exists=True, file_okay=True, dir_okay=False, path_type=Path))
+@click.argument('ooxml_b', type=click.Path(exists=True, file_okay=True, dir_okay=False, path_type=Path))
+@click.argument('repo_path', type=click.Path(exists=False, file_okay=True, dir_okay=False, path_type=Path))
+@click.option(
+    '-f', '--force',
+    is_flag=True,
+    help='Overwrite existing repo without prompt'
+)
+def cli_manual_merge(ooxml_original: Path, ooxml_a: Path, ooxml_b: Path, repo_path: Path, force: bool):
+    """
+    Merges changes from two modified OOXML files based on an original file.
+    
+    Examples:
+      ooxml automerge original.xlsx modified_a.xlsx modified_b.xlsx merged.xlsx
+      ooxml automerge original.vsdx mod_a.vsdx mod_b.vsdx result.vsdx --force
+    """
+    manual_merge(ooxml_original, ooxml_a, ooxml_b, repo_path, force)

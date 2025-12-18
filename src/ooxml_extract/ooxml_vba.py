@@ -130,6 +130,7 @@ def import_vba_project(vsdm_file: Path, vba_files_dir: Path) -> bool:
     return success
 
 
+# Implementierung mit oletools, ohne COM. Export geht, Import/Update von vbaProject.bin ist zu kompliziert.
 # def extract_vba_project(ooxml_path: Path, output_dir: Path) -> bool:
 #     vbaparser = VBA_Parser(ooxml_path)
     
